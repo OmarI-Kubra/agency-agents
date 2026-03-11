@@ -24,7 +24,35 @@ Born from a Reddit thread and months of iteration, **The Agency** is a growing c
 
 ## ⚡ Quick Start
 
-### Option 1: Use with Claude Code (Recommended)
+### Option 1: MCP Server for Cursor (Recommended — works in all projects)
+
+Run one script and every Cursor project gets access to all 112 agents instantly — no per-project setup needed.
+
+```bash
+git clone https://github.com/OmarI-Kubra/agency-agents.git
+cd agency-agents
+./scripts/setup-cursor-mcp.sh
+```
+
+That's it. Restart Cursor and start using agents in any project:
+
+```
+"List all engineering agents"
+"Use the frontend-developer agent to review my code"
+"Search for agents related to security"
+```
+
+**Requires**: Node.js >= 18
+
+The script builds the MCP server and registers it in your global Cursor config (`~/.cursor/mcp.json`). Three tools are available everywhere:
+
+| MCP Tool | What It Does |
+|----------|--------------|
+| `list_agents` | List all agents, optionally filter by category |
+| `get_agent` | Get the full personality and instructions for any agent |
+| `search_agents` | Search agents by keyword |
+
+### Option 2: Use with Claude Code
 
 ```bash
 # Copy agents to your Claude Code directory
@@ -34,7 +62,7 @@ cp -r agency-agents/* ~/.claude/agents/
 # "Hey Claude, activate Frontend Developer mode and help me build a React component"
 ```
 
-### Option 2: Use as Reference
+### Option 3: Use as Reference
 
 Each agent file contains:
 - Identity & personality traits
@@ -44,7 +72,7 @@ Each agent file contains:
 
 Browse the agents below and copy/adapt the ones you need!
 
-### Option 3: Use with Other Tools (Cursor, Aider, Windsurf, Gemini CLI, OpenCode)
+### Option 4: Use with Other Tools (Cursor rules, Aider, Windsurf, Gemini CLI, OpenCode)
 
 ```bash
 # Step 1 -- generate integration files for all supported tools
@@ -445,7 +473,7 @@ The Agency works natively with Claude Code, and ships conversion + install scrip
 - **[Antigravity](https://github.com/google-gemini/antigravity)** — `SKILL.md` per agent → `~/.gemini/antigravity/skills/`
 - **[Gemini CLI](https://github.com/google-gemini/gemini-cli)** — extension + `SKILL.md` files → `~/.gemini/extensions/agency-agents/`
 - **[OpenCode](https://opencode.ai)** — `.md` agent files → `.opencode/agents/`
-- **[Cursor](https://cursor.sh)** — `.mdc` rule files → `.cursor/rules/`
+- **[Cursor](https://cursor.sh)** — MCP server (global, recommended) or `.mdc` rule files → `.cursor/rules/`
 - **[Aider](https://aider.chat)** — single `CONVENTIONS.md` → `./CONVENTIONS.md`
 - **[Windsurf](https://codeium.com/windsurf)** — single `.windsurfrules` → `./.windsurfrules`
 - **[OpenClaw](https://openclaw.com)** — `SOUL.md` + `AGENTS.md` + `IDENTITY.md` per agent
@@ -593,6 +621,16 @@ See [integrations/opencode/README.md](integrations/opencode/README.md) for detai
 
 <details>
 <summary><strong>Cursor</strong></summary>
+
+**Recommended: MCP Server (global, all projects)**
+
+```bash
+./scripts/setup-cursor-mcp.sh
+```
+
+One-time setup. Builds the MCP server and registers it in `~/.cursor/mcp.json`. All 112 agents are available in every Cursor project via `list_agents`, `get_agent`, and `search_agents` tools. Requires Node.js >= 18.
+
+**Alternative: Per-project rule files**
 
 Each agent becomes a `.mdc` rule file in `.cursor/rules/` of your project.
 
