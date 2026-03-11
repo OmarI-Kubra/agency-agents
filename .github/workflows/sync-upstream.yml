@@ -1,0 +1,51 @@
+name: Sync Fork with Upstream
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Daily at 6:00 AM UTC
+  workflow_dispatch:       # Allow manual trigger from Actions tab
+
+jobs:
+  sync:
+    name: Sync with msitarzewski/agency-agents
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/msitarzewski/agency-agents.git
+
+      - name: Fetch upstream
+        run: git fetch upstream main
+
+      - name: Check for new commits
+        id: check
+        run: |
+          BEHIND=$(git rev-list --count HEAD..upstream/main)
+          echo "behind=$BEHIND" >> "$GITHUB_OUTPUT"
+          if [ "$BEHIND" -eq 0 ]; then
+            echo "Fork is already up to date with upstream."
+          else
+            echo "Fork is $BEHIND commit(s) behind upstream."
+          fi
+
+      - name: Merge upstream changes
+        if: steps.check.outputs.behind != '0'
+        run: |
+          git merge upstream/main --no-edit --strategy-option theirs
+          echo "Merged ${{ steps.check.outputs.behind }} commit(s) from upstream."
+
+      - name: Push changes
+        if: steps.check.outputs.behind != '0'
+        run: git push origin main
